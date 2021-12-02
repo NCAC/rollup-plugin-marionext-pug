@@ -1,0 +1,44 @@
+{
+  "name": "rollup-plugin-marionext-pug",
+  "version": "1.0.0",
+  "description": "A rollup plugin to transform .pug files into snabbdom functions for Marionext framework",
+  "main": "dist/rollup-plugin-pug-marionext",
+  "type": "module",
+  "scripts": {
+    "build": "node ./lib/build.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NCAC/rollup-plugin-marionext-pug.git"
+  },
+  "keywords": [
+    "pug",
+    "marionext",
+    "snabbdom"
+  ],
+  "prettier": {
+    "trailingComma": "none",
+    "semi": true,
+    "quoteProps": "as-needed",
+    "useTabs": false,
+    "singleQuote": false,
+    "bracketSpacing": true
+  },
+  "author": "NCAC",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/NCAC/rollup-plugin-marionext-pug/issues"
+  },
+  "homepage": "https://github.com/NCAC/rollup-plugin-marionext-pug#readme",
+  "dependencies": {
+    "fs-extra": "^10.0.0",
+    "pug-attrs": "^3.0.0",
+    "pug-filters": "^4.0.0",
+    "pug-lexer": "^5.0.1",
+    "pug-load": "^3.0.0",
+    "pug-parser": "^6.0.0",
+    "rollup": "^2.60.2",
+    "rollup-plugin-ts": "^2.0.4",
+    "typescript": "^4.5.2"
+  }
+}

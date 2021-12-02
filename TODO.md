@@ -1,0 +1,1 @@
+- see https://github.com/aMarCruz/rollup-plugin-pug as example
