@@ -9,7 +9,12 @@ export default function templateTest(data, view) {
     n2Child.push(VDom.text("index inférieur à 1"))
     var props2 = {attrs: VDom.compileAttributes([{name:'class', val: 'paragraph'},{name:'data-index', val: data.index}], [])};
     // UIEvent
-    if (view.)
+    /**
+     * 1. get an array of selectors that correspond to the current tag [".classA", ".classB", "#id"] for example
+     * 2. check if this selector exists in view.ViewUIEvents.getBindinds()
+     * 3. if it exixts, create an object events2 with this shape : { name_of_event: eventHandlerFunction, another_event_name: anotherEventHandlerFunction }
+     * 4. prop2.on = events2
+     */
     if (props2.attrs.id) props2.key = props2.attrs.id;
     var n2 = VDom.h('p', props2, n2Child)
     n1Child.push(n2);

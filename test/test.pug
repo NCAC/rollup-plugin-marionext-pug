@@ -5,8 +5,9 @@
     p.paragraph(data-index=data.index) index supérieur à 1
   ul.list
   each item, index in data.items
-    li.item
-      span.item-text item
+    li.item.anotherclass
+      span.item-text=item
+      br
       +image(index)
 
 

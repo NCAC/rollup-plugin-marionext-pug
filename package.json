@@ -5,7 +5,8 @@
   "main": "dist/rollup-plugin-pug-marionext.js",
   "type": "module",
   "scripts": {
-    "build": "node ./lib/build.js"
+    "build": "node ./lib/build.js",
+    "test": "node ./test/test01.js"
   },
   "repository": {
     "type": "git",
@@ -32,6 +33,7 @@
   "homepage": "https://github.com/NCAC/rollup-plugin-marionext-pug#readme",
   "dependencies": {
     "@types/pug": "^2.0.5",
+    "browser-sync": "^2.27.7",
     "fs-extra": "^10.0.0",
     "pug-attrs": "^3.0.0",
     "pug-filters": "^4.0.0",

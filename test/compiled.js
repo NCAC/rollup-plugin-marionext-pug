@@ -1,4 +1,4 @@
-export default function templateTest(data) {
+export default function templateTest(data, uiEventsBindings) {
   if (!VDom) {
     throw "VDom not found.";
   }
@@ -8,20 +8,26 @@ export default function templateTest(data) {
     var n2Child = [];
     n2Child.push(VDom.text("index inférieur à 1"))
     var props2 = {attrs: VDom.compileAttributes([{name:'class', val: 'paragraph'},{name:'data-index', val: data.index}], [])};
-    if (props2.attrs.id) props2.key = props2.attrs.id;
+    if (props2.attrs.id) {
+      props2.key = props2.attrs.id;
+    }
     var n2 = VDom.h('p', props2, n2Child)
     n1Child.push(n2);
   } else {
     var n3Child = [];
     n3Child.push(VDom.text("index supérieur à 1"))
     var props3 = {attrs: VDom.compileAttributes([{name:'class', val: 'paragraph'},{name:'data-index', val: data.index}], [])};
-    if (props3.attrs.id) props3.key = props3.attrs.id;
+    if (props3.attrs.id) {
+      props3.key = props3.attrs.id;
+    }
     var n3 = VDom.h('p', props3, n3Child)
     n1Child.push(n3);
   }
   var n4Child = [];
   var props4 = {attrs: VDom.compileAttributes([{name:'class', val: 'list'}], [])};
-  if (props4.attrs.id) props4.key = props4.attrs.id;
+  if (props4.attrs.id) {
+    props4.key = props4.attrs.id;
+  }
   var n4 = VDom.h('ul', props4, n4Child)
   n1Child.push(n4);
   var v5 = data.items
@@ -29,28 +35,43 @@ export default function templateTest(data) {
     var item = v5[index]
     var n6Child = [];
     var n7Child = [];
-    n7Child.push(VDom.text("item"))
+    n7Child = n7Child.concat(VDom.text(item))
     var props7 = {attrs: VDom.compileAttributes([{name:'class', val: 'item-text'}], [])};
-    if (props7.attrs.id) props7.key = props7.attrs.id;
+    if (props7.attrs.id) {
+      props7.key = props7.attrs.id;
+    }
     var n7 = VDom.h('span', props7, n7Child)
     n6Child.push(n7);
+    var n8Child = [];
+    var props8 = {attrs: VDom.compileAttributes([], [])};
+    if (props8.attrs.id) {
+      props8.key = props8.attrs.id;
+    }
+    var n8 = VDom.h('br', props8, n8Child)
+    n6Child.push(n8);
     n6Child.push(image(index));
-    var props7 = {attrs: VDom.compileAttributes([{name:'class', val: 'item'}], [])};
-    if (props7.attrs.id) props7.key = props7.attrs.id;
-    var n7 = VDom.h('li', props7, n7Child)
-    n1Child.push(n7);
+    var props6 = {attrs: VDom.compileAttributes([{name:'class', val: 'item'},{name:'class', val: 'anotherclass'}], [])};
+    if (props6.attrs.id) {
+      props6.key = props6.attrs.id;
+    }
+    var n6 = VDom.h('li', props6, n6Child)
+    n1Child.push(n6);
   }.bind(this))
-  var props7 = {attrs: VDom.compileAttributes([{name:'id', val: 'test'}], [])};
-  if (props7.attrs.id) props7.key = props7.attrs.id;
-  var n7 = VDom.h('div', props7, n7Child)
-  n0Child.push(n7);
+  var props1 = {attrs: VDom.compileAttributes([{name:'id', val: 'test'}], [])};
+  if (props1.attrs.id) {
+    props1.key = props1.attrs.id;
+  }
+  var n1 = VDom.h('div', props1, n1Child)
+  n0Child.push(n1);
   function image(index, __block) {
-    var n8Child = []
-    var n9Child = [];
-    var props9 = {attrs: VDom.compileAttributes([{name:'class', val: 'item-picture'},{name:'src', val: `https://www.example.com/assets/image${index}.png`}], [])};
-    if (props9.attrs.id) props9.key = props9.attrs.id;
-    var n9 = VDom.h('img', props9, n9Child)
-    n8Child.push(n9);
+    var n9Child = []
+    var n10Child = [];
+    var props10 = {attrs: VDom.compileAttributes([{name:'class', val: 'item-picture'},{name:'src', val: `https://www.example.com/assets/image${index}.png`}], [])};
+    if (props10.attrs.id) {
+      props10.key = props10.attrs.id;
+    }
+    var n10 = VDom.h('img', props10, n10Child)
+    n9Child.push(n10);
     return n9Child
   }
   return n0Child;

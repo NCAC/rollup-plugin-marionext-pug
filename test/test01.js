@@ -13,3 +13,5 @@ const compiled = compileBody(str, {
 });
 
 fileSystem.writeFileSync(join(__dirname, "/compiled.js"), compiled.body);
+
+
