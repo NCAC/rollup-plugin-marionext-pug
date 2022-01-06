@@ -3,6 +3,7 @@ import { createFilter } from "rollup-pluginutils";
 import load from "pug-load";
 import lex from "pug-lexer";
 import parse from "pug-parser";
+import { isEmpty } from "lodash-es";
 
 const RE_IMPORTS = /^([ \t]*-)[ \t]*(import[ \t*{'"].*)/gm;
 /**
@@ -216,6 +217,47 @@ class Compiler {
     this.indent--;
     this.addI(`}`);
   }
+  compileAttrs(attributes, attributeBlocks) {
+    const propsObj = {};
+    let attrsObj = {};
+    if (!attributeBlocks.length) {
+      attrsObj = attributes.reduce((finalObj, attr) => {
+        const val = attr.val.slice(1, -1);
+        finalObj[attr.name] = finalObj[attr.name]
+          ? finalObj[attr.name].concat(val)
+          : [val];
+        return finalObj;
+      }, {});
+    } else {
+      attrsObj = attributeBlocks.reduce(
+        function (finalObj, currObj) {
+          for (var propName in currObj) {
+            finalObj[propName] = finalObj[propName]
+              ? finalObj[propName].concat(currObj[propName])
+              : [currObj[propName]];
+          }
+          return finalObj;
+        },
+        attributes.reduce(function (finalObj, attr) {
+          var val = attr.val;
+          finalObj[attr.name] = finalObj[attr.name]
+            ? finalObj[attr.name].concat(val)
+            : [val];
+          return finalObj;
+        }, {})
+      );
+    }
+    for (var propName in attrsObj) {
+      if ("class" !== propName) {
+        attrsObj[propName] = attrsObj[propName].pop();
+        if ("id" === propName) {
+          propsObj.key = attrsObj[propName];
+        }
+      }
+    }
+    propsObj.attrs = attrsObj;
+    return propsObj;
+  }
   visit(node, parent) {
     if (!this[`visit${node.type}`]) {
       throw new Error(`Node not handled: ${node.type}`);
@@ -234,16 +276,59 @@ class Compiler {
     const s = this.parentTagId;
     this.parentTagId = id;
     this.visitBlock(node.block, node);
-    this.addI(
-      `var props${id} = {attrs: VDom.compileAttributes([${node.attrs
-        .map((attr) => "{name:'" + attr.name + "', val: " + attr.val + "}")
-        .join(",")}], [${node.attributeBlocks.join(",")}])};`
-    );
-    this.addI(`if (props${id}.attrs.id) {`);
-    this.indent++;
-    this.addI(`props${id}.key = props${id}.attrs.id;`);
-    this.indent--;
-    this.addI(`}`);
+    this.addI(`var props${id} = {}`);
+    const props = this.compileAttrs(node.attrs, node.attributeBlocks);
+    const selectors = [];
+    for (const propKey in props) {
+      const prop = props[propKey];
+      if ("key" === propKey) {
+        this.addI(`props${id}.key = "${prop}";`);
+      } else if ("attrs" === propKey) {
+        if (!isEmpty(prop)) {
+          Object.keys(prop).forEach((attr, index) => {
+            const value = prop[attr];
+            if (0 === index) {
+              this.addI(`props${id}.attrs = {};`);
+            }
+            switch (attr) {
+              case "class":
+                this.addI(`props${id}.attrs.class = "${value.join(" ")}";`);
+                value.forEach((className) => {
+                  selectors.push(`.${className}`);
+                });
+                break;
+              case "id":
+                this.addI(`props${id}.id = "${value}";`);
+                selectors.push(`#${value}`);
+                break;
+              default:
+                this.addI(`props${id}.attrs["${attr}"] = "${value}";`);
+                selectors.push(`[${attr}=${value}]`);
+            }
+          });
+        }
+      }
+    }
+    if (selectors.length) {
+      this.addI(`props${id}.on = {}`);
+      // this.addI(`const selectors${id} = ${JSON.stringify(selectors)}`);
+      selectors.forEach((selector) => {
+        this.addI(
+          `if (Object.keys(uiEventsBindings).includes("${selector}")) {`
+        );
+        this.indent++;
+        // this.addI(`const test__${id} = uiEventsBindings["${selector}"]`);
+        this.addI(
+          `uiEventsBindings["${selector}"].forEach((eventBinding) => {`
+        );
+        this.indent++;
+        this.addI(`props${id}.on[eventBinding.event] = eventBinding.callback;`);
+        this.indent--;
+        this.addI("});");
+        this.indent--;
+        this.addI("}");
+      });
+    }
     this.addI(
       `var n${id} = VDom.h(${
         node.name ? `'${node.name}'` : `${node.expr}`
