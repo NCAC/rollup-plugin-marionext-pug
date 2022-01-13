@@ -1,5 +1,22 @@
 import { isEmpty } from "lodash-es";
 
+function removeQuotes(str: string): string {
+  return str.slice(1, -1);
+}
+
+// transforms ["classA", "classB", "classC"] into "classA classB classC"
+function transformClassArray(vals: string[]): string {
+  let value = "";
+  for (let i = 0; i < vals.length; i += 1) {
+    if (i < vals.length - 1) {
+      value += `${removeQuotes(vals[i])} `;
+    } else {
+      value += removeQuotes(vals[i]);
+    }
+  }
+  return value;
+}
+
 class Compiler {
   options: { templateName: string } & { [key: string]: any };
   ast;
@@ -51,7 +68,7 @@ class Compiler {
     let attrsObj = {};
     if (!attributeBlocks.length) {
       attrsObj = attributes.reduce((finalObj, attr) => {
-        const val = attr.val.slice(1, -1);
+        const val = attr.val;
         finalObj[attr.name] = finalObj[attr.name]
           ? finalObj[attr.name].concat(val)
           : [val];
@@ -115,7 +132,7 @@ class Compiler {
       const prop = props[propKey];
 
       if ("key" === propKey) {
-        this.addI(`props${id}.key = "${prop}";`);
+        this.addI(`props${id}.key = ${prop};`);
       } else if ("attrs" === propKey) {
         if (!isEmpty(prop)) {
           Object.keys(prop).forEach((attr, index) => {
@@ -125,18 +142,25 @@ class Compiler {
             }
             switch (attr) {
               case "class":
-                this.addI(`props${id}.attrs.class = "${value.join(" ")}";`);
+                this.addI(
+                  `props${id}.attrs.class = "${transformClassArray(value)}"`
+                );
                 value.forEach((className) => {
-                  selectors.push(`.${className}`);
+                  selectors.push(`.${removeQuotes(className)}`);
                 });
                 break;
               case "id":
-                this.addI(`props${id}.id = "${value}";`);
-                selectors.push(`#${value}`);
+                this.addI(`props${id}.attrs.id = ${value};`);
+                selectors.push(`#${removeQuotes(value)}`);
                 break;
               default:
-                this.addI(`props${id}.attrs["${attr}"] = "${value}";`);
-                selectors.push(`[${attr}=${value}]`);
+                this.addI(`props${id}.attrs["${attr}"] = ${value};`);
+                if (/^data-[a-zA-Z]+$/.test(attr)) {
+                  selectors.push(`[${attr}]`);
+                } /* else if (/^(?!(href|src|value|for)$).+$/.test(attr)) {
+                  // ignore href, src
+                  selectors.push(`[${attr}='${removeQuotes(value)}']`);
+                }*/
             }
           });
         }

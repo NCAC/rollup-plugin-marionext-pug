@@ -1,14 +1,16 @@
 #test
+
   if data.index > 1
-    p.paragraph(data-index=data.index) index inférieur à 1
+    p.paragraph(data-index=index) index inférieur à 1
   else
-    p.paragraph(data-index=data.index) index supérieur à 1
+    p.paragraph(data-index=index) index supérieur à 1
   ul.list
   each item, index in data.items
     li.item.anotherclass
       span.item-text=item
       br
-      +image(index)
+      div(data-picture=index)
+        +image(index)
 
 
 mixin image(index)
