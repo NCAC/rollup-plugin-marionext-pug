@@ -80,7 +80,10 @@ export function marionextPugPlugin(options: Partial<PugPluginOpts>): Plugin {
       code = moveImports(code, imports);
 
       // get function body and dependencies
-      fn = compileBody(code, Object.assign(pugOpts, { templateName }));
+      fn = compileBody(
+        code,
+        Object.assign(pugOpts, { templateName })
+      ) as ReturnType<typeof compileBody>;
 
       // put the pung-runtime import as the first of the queue
       const marionextModuleName = config.marionextModuleName || "marionext";

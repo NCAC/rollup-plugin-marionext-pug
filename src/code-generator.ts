@@ -45,6 +45,7 @@ class Compiler {
   }
 
   bootstrap() {
+    this.addI("");
     this.addI(
       `export default function ${
         this.options.templateName || "template"

@@ -13,10 +13,10 @@ import fileSystem from "fs-extra";
  */
 export const cache = {};
 
-export const compileBody = function compileBody(
+export function compileBody(
   str: string,
   options: PugOwnOpts & { templateName?: string }
-) {
+): { body: string; dependencies: string[] } {
   var debug_sources = {};
   debug_sources[options.filename] = str;
   var dependencies = [];
@@ -28,7 +28,7 @@ export const compileBody = function compileBody(
     resolve: function (filename, source, loadOptions) {
       return load.resolve(filename, source, loadOptions);
     },
-    read: function (filename, loadOptions) {
+    read: function (filename: string, loadOptions) {
       dependencies.push(filename);
 
       const contents = load.read(filename, loadOptions);
@@ -61,4 +61,4 @@ export const compileBody = function compileBody(
     body: js,
     dependencies: dependencies
   };
-};
+}
